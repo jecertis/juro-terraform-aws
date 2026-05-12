@@ -1,0 +1,25 @@
+# Juro Tier 3 — AWS install variables
+# Copy to terraform.tfvars and fill in all required values before running
+# `terraform plan`. Do NOT put credentials here — AWS creds come from the
+# standard environment (AWS_PROFILE, instance profile, etc.).
+
+# Required — set from the SOW
+aws_region          = "us-east-1"
+agent_image_tag     = "1.0.0"                             # must match SOW pin
+engagement_slug     = "acme-corp"                          # kebab-case, no spaces
+expires_at          = "2026-11-12T00:00:00Z"               # RFC 3339
+
+# Required — customer-provided from Phase 0 prereqs
+artifact_store_bucket = "acme-juro-artifacts"              # customer-owned S3 bucket
+oidc_issuer           = "https://token.actions.githubusercontent.com"
+subnet_ids            = ["subnet-0abc123456789def0"]       # private subnets only
+security_group_ids    = ["sg-0abc123456789def0"]
+
+# Optional — override only if mirroring rule packs internally
+# rule_pack_registry = "ghcr.io/jecertis/juro-rules"
+
+# Optional — set to false to disable transparency log publishing
+# telemetry_enabled = true
+
+# Optional — override to change scan cadence (EventBridge cron syntax)
+# scan_schedule = "cron(0 3 * * ? *)"
