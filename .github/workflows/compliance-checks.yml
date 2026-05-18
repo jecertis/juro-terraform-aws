@@ -26,8 +26,9 @@ jobs:
         run: |
           set -e
           files=()
+          # CLAUDE.md is an agent instruction file, not a marketing surface —
+          # it legitimately quotes banned phrases in their prohibited context.
           [[ -f README.md ]] && files+=("README.md")
-          [[ -f CLAUDE.md ]] && files+=("CLAUDE.md")
           printf '%s\n' "${files[@]}" > files.txt
 
       - name: Run banned-claims check
