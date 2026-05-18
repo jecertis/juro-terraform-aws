@@ -22,19 +22,15 @@ jobs:
         # Re-vendor when the canonical list changes in juro-platform.
         run: chmod +x .github/scripts/check-banned-claims.sh .github/scripts/check-agent-preamble.sh
 
-      - name: Collect files for banned-claims check
+      - name: Run banned-claims check
         run: |
           set -e
           files=()
           # CLAUDE.md is an agent instruction file, not a marketing surface —
           # it legitimately quotes banned phrases in their prohibited context.
           [[ -f README.md ]] && files+=("README.md")
-          printf '%s\n' "${files[@]}" > files.txt
-
-      - name: Run banned-claims check
-        run: |
-          if [[ -s files.txt ]]; then
-            xargs -a files.txt .github/scripts/check-banned-claims.sh
+          if [[ ${#files[@]} -gt 0 ]]; then
+            .github/scripts/check-banned-claims.sh "${files[@]}"
           else
             echo "No marketing-surface files found — skipping banned-claims check"
           fi
