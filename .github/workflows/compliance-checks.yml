@@ -32,7 +32,12 @@ jobs:
           printf '%s\n' "${files[@]}" > files.txt
 
       - name: Run banned-claims check
-        run: xargs -a files.txt .github/scripts/check-banned-claims.sh
+        run: |
+          if [[ -s files.txt ]]; then
+            xargs -a files.txt .github/scripts/check-banned-claims.sh
+          else
+            echo "No marketing-surface files found — skipping banned-claims check"
+          fi
 
       - name: Run agent-preamble check
         run: .github/scripts/check-agent-preamble.sh CLAUDE.md
