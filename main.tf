@@ -172,6 +172,16 @@ data "aws_iam_policy_document" "agent_readonly" {
   }
 
   statement {
+    sid    = "CloudWatchLogsRead"
+    effect = "Allow"
+    actions = [
+      "logs:DescribeLogGroups",
+      "logs:ListTagsLogGroup",
+    ]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "CloudFrontRead"
     effect = "Allow"
     actions = [
@@ -264,6 +274,7 @@ data "aws_iam_policy_document" "agent_boundary" {
       "ssm:Describe*", "ssm:Get*", "ssm:List*",
       "cloudfront:Describe*", "cloudfront:Get*", "cloudfront:List*",
       "apigateway:GET",
+      "logs:DescribeLogGroups", "logs:ListTagsLogGroup",
       "ec2:Describe*",
       "sts:GetCallerIdentity",
     ]
