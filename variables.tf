@@ -73,7 +73,20 @@ variable "engagement_slug" {
   type        = string
 }
 
+# expires_at — engagement expiry (externally enforced)
+#
+# AWS IAM does not natively expire roles or policies. Enforcement is the customer's
+# responsibility: when the engagement ends, run:
+#
+#   terraform destroy -var-file="terraform.tfvars"
+#
+# This removes all resources created by this module (IAM roles, ECS cluster, task
+# definition, EventBridge rule, CloudWatch log group, SSM parameters). The artifact
+# store bucket is customer-owned and is NOT destroyed — findings are retained by the
+# customer per their own retention policy.
+#
+# Recommended: set a calendar reminder for the expires_at date at engagement start.
 variable "expires_at" {
-  description = "Engagement expiration date (RFC 3339). Externally enforced — AWS IAM does not natively expire roles."
+  description = "Engagement expiration date (RFC 3339). Externally enforced — AWS IAM does not natively expire roles. Run `terraform destroy -var-file=terraform.tfvars` when the engagement ends."
   type        = string
 }
