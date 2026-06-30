@@ -1,16 +1,11 @@
-output "agent_task_arn" {
-  description = "ARN of the most recently started Juro agent ECS task. Use this in Phase 2.1 (`aws ecs execute-command --task <arn>`) to run `juro preflight`."
-  value       = "${aws_ecs_cluster.juro.arn}/${aws_ecs_task_definition.agent.family}"
+output "ecs_task_definition_arn" {
+  description = "ECS task definition ARN. Use to trigger a manual scan: aws ecs run-task --cluster <cluster> --task-definition <arn> --launch-type FARGATE --network-configuration ..."
+  value       = aws_ecs_task_definition.agent.arn
 }
 
 output "ecs_cluster_name" {
-  description = "Name of the ECS cluster the Juro agent runs in."
+  description = "Name of the ECS cluster the Juro agent task runs in."
   value       = aws_ecs_cluster.juro.name
-}
-
-output "ecs_service_name" {
-  description = "Name of the ECS service managing the Juro agent task."
-  value       = aws_ecs_service.agent.name
 }
 
 output "agent_task_role_arn" {

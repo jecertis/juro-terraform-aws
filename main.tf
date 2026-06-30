@@ -473,60 +473,10 @@ resource "aws_ecs_task_definition" "agent" {
         }
       }
 
-      # Enable ECS Exec so Phase 2.1 (`aws ecs execute-command`) works
-      linuxParameters = {
-        initProcessEnabled = true
-      }
     }
   ])
 
   tags = local.common_tags
-}
-
-# -----------------------------------------------------------------------------
-# ECS service
-# ECS Exec is enabled so `juro preflight` can be run interactively (Phase 2.1)
-# -----------------------------------------------------------------------------
-
-resource "aws_ecs_service" "agent" {
-  name                   = local.name_prefix
-  cluster                = aws_ecs_cluster.juro.id
-  task_definition        = aws_ecs_task_definition.agent.arn
-  desired_count          = 1
-  launch_type            = "FARGATE"
-  enable_execute_command = true
-
-  network_configuration {
-    subnets          = var.subnet_ids
-    security_groups  = var.security_group_ids
-    assign_public_ip = false
-  }
-
-  tags = local.common_tags
-
-  lifecycle {
-    ignore_changes = [task_definition]
-  }
-}
-
-# IAM policy allowing ECS Exec for the task (SSM messages)
-resource "aws_iam_role_policy" "agent_ecs_exec" {
-  name   = "juro-ecs-exec"
-  role   = aws_iam_role.agent.id
-  policy = data.aws_iam_policy_document.agent_ecs_exec.json
-}
-
-data "aws_iam_policy_document" "agent_ecs_exec" {
-  statement {
-    effect = "Allow"
-    actions = [
-      "ssmmessages:CreateControlChannel",
-      "ssmmessages:CreateDataChannel",
-      "ssmmessages:OpenControlChannel",
-      "ssmmessages:OpenDataChannel",
-    ]
-    resources = ["*"]
-  }
 }
 
 # -----------------------------------------------------------------------------
@@ -550,7 +500,6 @@ resource "aws_cloudwatch_event_target" "scan_schedule" {
     task_definition_arn = aws_ecs_task_definition.agent.arn
     task_count          = 1
     launch_type         = "FARGATE"
-    enable_execute_command = true
 
     network_configuration {
       subnets          = var.subnet_ids
